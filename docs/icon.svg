@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+
+
+<linearGradient id="cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#f3eee2"/></linearGradient>
+<filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#7a3a22" flood-opacity=".28"/></filter>
+<filter id="app" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".28"/></filter>
+</defs>
+  <g filter="url(#app)"><rect x="100" y="100" width="824" height="824" rx="185" fill="#eb633c"/></g>
+  <g filter="url(#sh)">
+    <path d="M646.67 395.33A165 165 0 1 0 646.67 628.67" fill="none" stroke="url(#cream)" stroke-width="110" stroke-linecap="round"/>
+    <path fill="url(#cream)" d="M699.71 724.13L724.45 748.88A30 30 0 0 0 766.88 706.45L742.13 681.71A30 30 0 0 0 699.71 724.13ZM485.91 780.06L482.77 839.98A30 30 0 0 0 542.69 843.12L545.83 783.2A30 30 0 0 0 485.91 780.06ZM323.92 689.01L303.46 710.95A30 30 0 0 0 347.34 751.87L367.8 729.93A30 30 0 0 0 323.92 689.01ZM260 482L190 482A30 30 0 0 0 190 542L260 542A30 30 0 0 0 260 482ZM367.8 294.07L343.93 268.48A30 30 0 0 0 300.05 309.4L323.92 334.99A30 30 0 0 0 367.8 294.07ZM545.83 240.8L542.95 185.88A30 30 0 0 0 483.03 189.02L485.91 243.94A30 30 0 0 0 545.83 240.8ZM742.13 342.29L763.35 321.08A30 30 0 0 0 720.92 278.65L699.71 299.87A30 30 0 0 0 742.13 342.29Z"/>
+  </g>
+</svg>

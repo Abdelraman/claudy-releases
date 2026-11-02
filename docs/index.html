@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claudy: a Mac app for Claude Code</title>
+<meta name="description" content="Claudy adds the Claude Code features developers were missing, in a native Mac app for the claude CLI. Streaming chats, per-turn diffs you can revert, a built-in browser, terminal, git, databases and SSH servers.">
+<meta property="og:title" content="Claudy: a Mac app for Claude Code">
+<meta property="og:description" content="The Claude Code features developers were missing: chats, revertable diffs, browser, terminal, git and more.">
+<meta property="og:image" content="icon.png">
+<meta name="theme-color" content="#eb633c">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ember: #eb633c;
+    --ember-deep: #b8401b;
+    --cream: #fff8ee;
+    --paper: #f6f5f2;
+    --ink: #1e1c1b;
+    --muted: #625d58;
+    --line: #e2dfda;
+    --win: #232120;
+    --win-side: #1b1a19;
+    --win-line: #34312f;
+    --win-text: #e9e5df;
+    --win-dim: #9a948d;
+    --add: #6fbf73;
+    --del: #e5735f;
+    --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --wrap: 1120px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 17px/1.6 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+  code, kbd { font-family: var(--mono); font-size: .86em; }
+  kbd {
+    display: inline-block; padding: 0 .4em; border: 1px solid var(--line);
+    border-bottom-width: 2px; border-radius: 5px; background: #fff; line-height: 1.5;
+  }
+  p code { background: #ebe8e3; padding: .1em .35em; border-radius: 4px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--ember);
+    color: var(--ink);
+    border-radius: 0 0 56px 56px;
+    padding-bottom: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  /* the icon's sun rays, oversized, behind the headline */
+  .hero::before {
+    content: ""; position: absolute; width: 820px; height: 820px;
+    right: -220px; top: -160px;
+    background: url("icon-rays.svg") center / contain no-repeat;
+    opacity: .14; pointer-events: none;
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 22px; padding-bottom: 22px; position: relative;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 21px/1 var(--display); color: var(--cream); }
+  .brand img { width: 34px; height: 34px; filter: drop-shadow(0 2px 4px rgba(90,30,10,.35)); }
+  .nav ul { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; }
+  .nav ul a { text-decoration: none; font-weight: 500; font-size: 15px; color: var(--ink); }
+  .nav ul a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+  .hero-copy { position: relative; padding-top: 56px; }
+  .hero-copy h1 { max-width: 11.5em; }
+  .hero h1 {
+    font: 800 clamp(48px, 8.4vw, 104px)/.92 var(--display);
+    letter-spacing: -.035em;
+    color: var(--cream);
+    margin: 0 0 28px;
+    text-wrap: balance;
+  }
+  .hero .lede { font-size: 20px; line-height: 1.5; max-width: 34em; margin: 0 0 36px; }
+
+  .download { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--ink); color: var(--cream);
+    padding: 17px 26px 17px 22px; border-radius: 14px;
+    text-decoration: none; font: 600 17px/1 var(--body);
+    box-shadow: 0 10px 24px -10px rgba(60,20,5,.6);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 14px 28px -10px rgba(60,20,5,.7); }
+  .btn:active { transform: translateY(1px); }
+  .btn svg { width: 20px; height: 20px; }
+  .release-meta { font-size: 15px; line-height: 1.45; }
+  .release-meta strong { font-weight: 600; }
+  .release-meta a { font-weight: 500; }
+
+  /* ---------- App window mockup ---------- */
+  .stage { position: relative; margin-top: 64px; padding: 0 28px; }
+  .window {
+    max-width: 1040px; margin: 0 auto;
+    background: var(--win); color: var(--win-text);
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 -2px 0 rgba(255,255,255,.08) inset, 0 30px 80px -20px rgba(50,15,0,.55);
+    font: 400 14px/1.55 var(--body);
+    overflow: hidden;
+  }
+  .titlebar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--win-line); }
+  .titlebar i { width: 12px; height: 12px; border-radius: 50%; background: #4a4643; }
+  .titlebar i:nth-child(1) { background: #ff5f57; }
+  .titlebar i:nth-child(2) { background: #febc2e; }
+  .titlebar i:nth-child(3) { background: #28c840; }
+  .titlebar span { margin-left: 14px; color: var(--win-dim); font-size: 13px; }
+  .app { display: grid; grid-template-columns: 210px 1fr 300px; min-height: 430px; }
+  .side { background: var(--win-side); border-right: 1px solid var(--win-line); padding: 14px 10px; font-size: 13px; }
+  .side h4 { margin: 6px 8px 8px; font: 500 12px/1 var(--body); color: var(--win-dim); }
+  .side .item { padding: 7px 10px; border-radius: 7px; color: #cfcac3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .side .item.on { background: #2e2b29; color: #fff; }
+  .side .item small { display: block; color: var(--win-dim); font-size: 11.5px; }
+  .chat { padding: 22px 26px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .msg-user { align-self: flex-end; background: #34302d; padding: 10px 14px; border-radius: 14px 14px 4px 14px; max-width: 80%; }
+  .tool {
+    font: 400 12.5px/1.4 var(--mono); color: var(--win-dim);
+    border: 1px solid var(--win-line); border-radius: 9px; padding: 8px 12px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .tool b { color: var(--win-text); font-weight: 500; }
+  .tool .ok { margin-left: auto; color: var(--add); }
+  .msg-ai p { margin: 0; }
+  .changed {
+    align-self: flex-start; display: inline-flex; gap: 10px; align-items: center;
+    background: #2e2b29; border: 1px solid var(--win-line); border-radius: 999px;
+    padding: 6px 14px; font-size: 13px; color: var(--win-text);
+  }
+  .changed .a { color: var(--add); font-family: var(--mono); font-size: 12px; }
+  .changed .d { color: var(--del); font-family: var(--mono); font-size: 12px; }
+  .composer {
+    margin-top: auto; border: 1px solid var(--win-line); border-radius: 12px;
+    padding: 12px 14px; color: var(--win-dim); display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .modes { display: flex; gap: 2px; background: #1b1a19; border-radius: 8px; padding: 3px; font-size: 12px; flex-shrink: 0; }
+  .modes span { padding: 3px 9px; border-radius: 6px; }
+  .modes .on { background: var(--ember); color: #fff; }
+  .diff { border-left: 1px solid var(--win-line); font: 400 12px/1.65 var(--mono); min-width: 0; }
+  .diff header { padding: 12px 14px; border-bottom: 1px solid var(--win-line); font-family: var(--body); font-size: 13px; display: flex; justify-content: space-between; }
+  .diff header button {
+    font: 500 12px/1 var(--body); color: var(--win-text); background: #34302d;
+    border: 0; border-radius: 6px; padding: 5px 9px; cursor: default;
+  }
+  .diff pre { margin: 0; padding: 10px 0; white-space: pre; overflow: hidden; }
+  .diff .l { display: block; padding: 0 14px; color: #b9b3ab; }
+  .diff .l.add { background: rgba(111,191,115,.12); color: #bfe6c1; }
+  .diff .l.del { background: rgba(229,115,95,.12); color: #f2b8ad; }
+
+  /* one orchestrated moment: the turn plays out once on load */
+  @media (prefers-reduced-motion: no-preference) {
+    .play > * { opacity: 0; animation: appear .45s ease forwards; }
+    .play > :nth-child(1) { animation-delay: .35s; }
+    .play > :nth-child(2) { animation-delay: .95s; }
+    .play > :nth-child(3) { animation-delay: 1.45s; }
+    .play > :nth-child(4) { animation-delay: 1.95s; }
+    .play > :nth-child(5) { animation-delay: 2.6s; }
+    .play > .composer { animation-delay: 0s; }
+    .diff .l.add, .diff .l.del { animation: flash 1.2s ease 2.7s both; }
+    @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @keyframes flash { from { background: transparent; } }
+  }
+
+  /* ---------- Sections ---------- */
+  section { padding: 120px 0 0; }
+  .section-head { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: end; margin-bottom: 56px; }
+  h2 {
+    font: 700 clamp(36px, 4.6vw, 56px)/1 var(--display);
+    letter-spacing: -.03em; margin: 0;
+    font-variant-ligatures: no-common-ligatures;
+    text-wrap: balance;
+  }
+  .section-head p { margin: 0; color: var(--muted); font-size: 19px; max-width: 36em; }
+
+  /* features: a quiet index of groups, heading left, details right */
+  .groups { border-top: 2px solid var(--ink); }
+  .group { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; padding: 34px 0; border-bottom: 1px solid var(--line); }
+  .group h3 { font: 700 26px/1.15 var(--display); letter-spacing: -.015em; margin: 0; }
+  .group h3 small { display: block; font: 400 15px/1.5 var(--body); letter-spacing: 0; color: var(--muted); margin-top: 8px; max-width: 18em; }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px 36px; }
+  .group li { font-size: 15.5px; line-height: 1.55; }
+  .group li b { display: block; font-weight: 600; font-size: 16px; margin-bottom: 2px; }
+
+  /* install: a real sequence, so it's numbered */
+  .install { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .steps { list-style: none; counter-reset: s; margin: 0; padding: 0; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 52px 1fr; padding: 0 0 30px; }
+  .steps li::before {
+    content: counter(s); width: 36px; height: 36px; border-radius: 50%;
+    background: var(--ember); color: #fff; display: grid; place-items: center;
+    font: 700 17px/1 var(--display);
+  }
+  .steps h3, .needs h3 { margin: 4px 0 6px; font: 700 21px/1.2 var(--display); }
+  .steps p, .needs p { margin: 0; color: var(--muted); }
+  .needs { background: #fff; border-radius: 22px; padding: 34px 36px; align-self: start; border: 1px solid var(--line); }
+  .needs dl { margin: 18px 0 0; }
+  .needs dt { font-weight: 600; margin-top: 18px; }
+  .needs dd { margin: 4px 0 0; color: var(--muted); }
+  .needs pre { margin: 10px 0 0; background: var(--win); color: var(--win-text); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font: 400 13px/1.5 var(--mono); }
+
+  .updates { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
+  .updates article h3 { font: 700 24px/1.2 var(--display); margin: 0 0 10px; letter-spacing: -.01em; }
+  .updates article p { margin: 0 0 12px; color: var(--muted); }
+
+  /* troubleshooting: heading pinned left, questions right */
+  .help { display: grid; grid-template-columns: 5fr 7fr; gap: 64px; align-items: start; }
+  .help-head h2 { font-size: clamp(36px, 4vw, 48px); }
+  .help-head { position: sticky; top: 32px; }
+  .help-head p { margin: 18px 0 0; color: var(--muted); font-size: 17px; max-width: 20em; }
+  .help-head .stuck { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink); font-size: 15.5px; }
+  .help-head .stuck a { color: var(--ember-deep); font-weight: 600; }
+  .faq { border-top: 2px solid var(--ink); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    list-style: none; cursor: pointer; padding: 24px 0;
+    font: 600 20px/1.3 var(--display); display: flex; justify-content: space-between; gap: 20px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; font: 400 28px/1 var(--body); color: var(--ember-deep); transition: transform .2s ease; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { margin: -6px 0 26px; color: var(--muted); max-width: 44em; }
+
+  footer { margin-top: 140px; background: var(--ink); color: #d8d3cc; border-radius: 56px 56px 0 0; padding: 72px 0 48px; }
+  .foot { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+  .foot h2 { color: var(--cream); font-size: clamp(30px, 3.6vw, 44px); margin-bottom: 18px; }
+  .foot h4 { margin: 6px 0 12px; font: 600 15px/1 var(--body); color: #fff; }
+  .foot ul { list-style: none; padding: 0; margin: 0; }
+  .foot li { margin-bottom: 8px; font-size: 15px; }
+  .foot a { color: #d8d3cc; }
+  .foot a:hover { color: #fff; }
+  .foot .btn { background: var(--ember); color: #fff; box-shadow: none; }
+  .fine { margin-top: 64px; padding-top: 22px; border-top: 1px solid #3a3735; font-size: 13.5px; color: #9a948d; }
+  footer :focus-visible { outline-color: var(--cream); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .app { grid-template-columns: 1fr 260px; }
+    .side { display: none; }
+  }
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .wrap { padding-left: 20px; padding-right: 20px; }
+    .nav ul { gap: 16px; }
+    .nav ul li.hide-sm { display: none; }
+    .hero { border-radius: 0 0 32px 32px; }
+    .hero-copy { padding-top: 28px; }
+    .hero .lede { font-size: 18px; }
+    .stage { padding: 0 12px; margin-top: 44px; }
+    .app { grid-template-columns: 1fr; min-height: 0; }
+    .diff { display: none; }
+    .chat { padding: 18px 16px 14px; }
+    .composer .hint { display: none; }
+    section { padding-top: 84px; }
+    .section-head, .group, .install, .updates, .foot, .help { grid-template-columns: 1fr; gap: 24px; }
+    .help-head { position: static; }
+    .group ul { grid-template-columns: 1fr; }
+    footer { border-radius: 32px 32px 0 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <nav class="nav wrap" aria-label="Main">
+    <a class="brand" href="#top" id="top"><img src="icon.svg" alt="" width="34" height="34">Claudy</a>
+    <ul>
+      <li class="hide-sm"><a href="#features">Features</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="https://github.com/Abdelraman/claudy-releases/releases">Releases</a></li>
+    </ul>
+  </nav>
+
+  <div class="wrap hero-copy">
+    <h1>The Claude Code features developers were missing.</h1>
+    <p class="lede">Claudy is a native Mac app for the <code>claude</code> CLI you already have. It uses your existing login, then adds what the terminal can't: revertable diffs, a browser, git, databases and more.</p>
+    <div class="download">
+      <a class="btn" id="dl" href="https://github.com/Abdelraman/claudy-releases/releases/latest">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.48.83-.72 0-1.82-.81-3-.79-1.54.02-2.97.9-3.76 2.28-1.6 2.78-.41 6.9 1.15 9.15.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.66l.05-.02ZM14.1 5.86c.63-.77 1.06-1.83.94-2.89-.91.04-2.01.61-2.66 1.37-.58.67-1.1 1.76-.96 2.8 1.01.08 2.05-.52 2.68-1.28Z"/></svg>
+        <span>Download for Mac</span>
+      </a>
+      <p class="release-meta" id="meta">For Apple Silicon Macs.<br>Signed and notarized by Apple.</p>
+    </div>
+  </div>
+
+  <div class="stage" aria-hidden="true">
+    <div class="window">
+      <div class="titlebar"><i></i><i></i><i></i><span>Claudy — upload-service</span></div>
+      <div class="app">
+        <aside class="side">
+          <h4>Projects</h4>
+          <div class="item on">upload-service<small>Retry failed chunks</small></div>
+          <div class="item">marketing-site<small>Fix the pricing table</small></div>
+          <div class="item">mobile-app<small>Dark mode for settings</small></div>
+          <h4 style="margin-top:18px">Terminal</h4>
+          <div class="item">zsh — npm run dev</div>
+        </aside>
+        <div class="chat play">
+          <div class="msg-user">Uploads fail on flaky Wi-Fi. Retry failed chunks with backoff.</div>
+          <div class="tool"><span>Read</span><b>src/upload/client.ts</b><span class="ok">✓</span></div>
+          <div class="tool"><span>Edit</span><b>src/upload/client.ts</b><span class="ok">✓</span></div>
+          <div class="msg-ai"><p>Each chunk now retries up to 3 times, waiting 0.5s, 1s, then 2s. A chunk that still fails surfaces the original error, so the progress bar doesn't stall silently.</p></div>
+          <div class="changed">2 files changed <span class="a">+38</span><span class="d">−6</span></div>
+          <div class="composer"><span>Reply to Claude…</span><span class="hint"></span><div class="modes"><span>Plan</span><span>Ask</span><span class="on">Edits</span><span>Auto</span></div></div>
+        </div>
+        <div class="diff">
+          <header><span>client.ts</span><button tabindex="-1">Revert file</button></header>
+<pre><span class="l">async function sendChunk(c) {</span><span class="l del">  return post(url, c.body);</span><span class="l add">  for (let i = 0; ; i++) {</span><span class="l add">    try {</span><span class="l add">      return await post(url, c.body);</span><span class="l add">    } catch (err) {</span><span class="l add">      if (i === 3) throw err;</span><span class="l add">      await sleep(500 * 2 ** i);</span><span class="l add">    }</span><span class="l add">  }</span><span class="l">}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="features" class="wrap">
+    <div class="section-head">
+      <h2>What Claude Code was missing.</h2>
+      <p>Claudy drives the real <code>claude</code> binary, so your plugins, memory and settings work as they do in the terminal. Everything else here is what developers kept switching windows for.</p>
+    </div>
+
+    <div class="groups">
+      <div class="group">
+        <h3>Chat with Claude Code<small>Streaming, with every tool call visible.</small></h3>
+        <ul>
+          <li><b>Readable output</b>Markdown, syntax highlighting and collapsible cards for Bash, Read, Edit, Grep, todos and agents.</li>
+          <li><b>Plan, Ask, Edits, Auto</b>Switch with <kbd>⇧Tab</kbd> mid-session. Plans get an approval card before anything is touched.</li>
+          <li><b>Permission prompts</b>Allow once, always allow for this chat, or deny with a note to Claude.</li>
+          <li><b>Session history</b>Resume and search any conversation from <code>~/.claude/projects</code>.</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Review and undo<small>Every turn is snapshotted.</small></h3>
+        <ul>
+          <li><b>Last-turn changes</b>Open “N files changed” to see unified or split diffs, then revert one file or the whole turn.</li>
+          <li><b>Works anywhere</b>Snapshots live in a shadow git repo outside your project. They catch Bash edits and work in folders without git.</li>
+          <li><b>File history</b>See every turn and commit that touched a file.</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Built-in browser<small>Preview your dev server beside the chat.</small></h3>
+        <ul>
+          <li><b>Localhost links open here</b>Toggle with <kbd>⌘⇧B</kbd>. The page stays loaded while the panel is hidden.</li>
+          <li><b>Point at an element</b>Comment on it with a cropped screenshot attached, or send the whole viewport.</li>
+          <li><b>Claude can drive it</b>Navigate, click, type, screenshot and read console logs. Running JavaScript asks you first.</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Project tools<small>One window per project.</small></h3>
+        <ul>
+          <li><b>Git</b>Branches, AI-written commit messages, a history graph, rebases, cherry-picks and a conflict editor.</li>
+          <li><b>Database</b>Browse and edit MySQL or MariaDB from a Laravel-style <code>.env</code>, with a SQL console.</li>
+          <li><b>Run</b>Start <code>package.json</code> scripts or <code>flutter run</code> on any device, with a live log.</li>
+          <li><b>Files, memory, plugins</b>An IDE-style file tree, <code>CLAUDE.md</code> and permission editing, and a plugin browser.</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Terminal and servers<small>Shells and SSH without leaving the app.</small></h3>
+        <ul>
+          <li><b>Terminal</b>Tabbed login shells, as their own view or as a panel inside each chat.</li>
+          <li><b>Servers</b>SSH and SFTP from a password-encrypted vault, with setup recipes for Nginx, PHP, MariaDB, PM2 and Docker.</li>
+        </ul>
+      </div>
+      <div class="group">
+        <h3>Cowork<small>Claude on documents, not just code.</small></h3>
+        <ul>
+          <li><b>Tasks on files</b>Attach folders or get a scratch folder. Switch to Cowork with <kbd>⌘⇧K</kbd>.</li>
+          <li><b>See the output</b>A side panel shows progress, produced files, connectors and document skills.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="install" class="wrap">
+    <div class="section-head">
+      <h2>Install in a minute.</h2>
+      <p>Releases are signed with a Developer ID and notarized by Apple, so macOS opens them without warnings.</p>
+    </div>
+    <div class="install">
+      <ol class="steps">
+        <li><div><h3>Download the DMG</h3><p>Get <code>Claudy-&lt;version&gt;-arm64.dmg</code> from the button above or the <a href="https://github.com/Abdelraman/claudy-releases/releases/latest">latest release</a>.</p></div></li>
+        <li><div><h3>Drag Claudy into Applications</h3><p>Open the DMG and drop the app into your Applications folder.</p></div></li>
+        <li><div><h3>Open a project folder</h3><p>Claudy finds <code>claude</code> on your shell <code>PATH</code>, in <code>~/.local/bin</code> or in Homebrew. If it's missing, Claudy offers to install it.</p></div></li>
+      </ol>
+      <div class="needs">
+        <h3>What you need</h3>
+        <dl>
+          <dt>A Mac with Apple Silicon</dt>
+          <dd>M1 or later. Intel builds aren't published.</dd>
+          <dt>The Claude Code CLI</dt>
+          <dd>Signed in with your account or subscription.
+            <pre>curl -fsSL https://claude.ai/install.sh | bash</pre></dd>
+          <dt>git</dt>
+          <dd>Used for change snapshots and the git tools.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="updates">
+      <article>
+        <h3>Claudy updates itself</h3>
+        <p>Every hour it checks for a new release, downloads the zip, verifies its SHA-512 checksum and swaps the app in place on your next restart.</p>
+        <p>To check by hand, open Settings › About. It also shows your version and build.</p>
+      </article>
+      <article>
+        <h3>So does Claude Code</h3>
+        <p>Claudy runs <code>claude update</code> on launch and every 6 hours. You can turn this off in Settings.</p>
+        <p>The ↻ button in a chat header restarts that chat on the new CLI version without losing its context.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="help" class="wrap help">
+    <div class="help-head">
+      <h2>Troubleshooting</h2>
+      <p>Most problems come down to where the CLI lives or a macOS permission.</p>
+      <p class="stuck">Still stuck? <a href="https://github.com/Abdelraman/claudy-releases/issues/new">Report an issue</a> with your Claudy version from Settings › About and your macOS version.</p>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Claudy says it can't find claude</summary>
+        <p>Set the CLI path in Settings, or install Claude Code with <code>curl -fsSL https://claude.ai/install.sh | bash</code> and reopen Claudy.</p>
+      </details>
+      <details>
+        <summary>macOS won't open the app</summary>
+        <p>Downloads from this site are notarized, so this shouldn't happen. If it does, open System Settings › Privacy &amp; Security and choose Open Anyway next to Claudy.</p>
+      </details>
+      <details>
+        <summary>Notifications don't appear</summary>
+        <p>Allow notifications for Claudy in System Settings › Notifications. Claudy plays a sound, posts a notification and badges the Dock when a chat needs you.</p>
+      </details>
+      <details>
+        <summary>I'm on an Intel Mac</summary>
+        <p>Only Apple Silicon builds are published right now.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <h2>Give Claude Code a home on your Mac.</h2>
+        <a class="btn" id="dl2" href="https://github.com/Abdelraman/claudy-releases/releases/latest"><span>Download for Mac</span></a>
+      </div>
+      <div>
+        <h4>Releases</h4>
+        <ul>
+          <li><a href="https://github.com/Abdelraman/claudy-releases/releases/latest">Latest release</a></li>
+          <li><a href="https://github.com/Abdelraman/claudy-releases/releases">All versions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Feedback</h4>
+        <ul>
+          <li><a href="https://github.com/Abdelraman/claudy-releases/issues/new">Report a bug</a></li>
+          <li><a href="https://github.com/Abdelraman/claudy-releases/issues">Open issues</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="fine">Made by Abdelrahman Eid. Claudy is an independent app and isn't affiliated with Anthropic. Claude and Claude Code are trademarks of Anthropic.</p>
+  </div>
+</footer>
+
+<script>
+  // Fill in the latest version and a direct DMG link. Links fall back to /releases/latest.
+  (async () => {
+    try {
+      const res = await fetch("https://api.github.com/repos/Abdelraman/claudy-releases/releases/latest", { headers: { Accept: "application/vnd.github+json" } });
+      if (!res.ok) return;
+      const rel = await res.json();
+      const dmg = (rel.assets || []).find(a => a.name.endsWith(".dmg"));
+      if (dmg) for (const id of ["dl", "dl2"]) document.getElementById(id).href = dmg.browser_download_url;
+      const version = rel.tag_name.replace(/^v/, "");
+      const date = new Date(rel.published_at).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+      const size = dmg ? `, ${Math.round(dmg.size / 1048576)} MB` : "";
+      const meta = document.getElementById("meta");
+      meta.innerHTML = "";
+      const line1 = document.createElement("strong");
+      line1.textContent = `Version ${version}`;
+      const notes = document.createElement("a");
+      notes.href = rel.html_url;
+      notes.textContent = "release notes";
+      meta.append(line1, ` released ${date}.`, document.createElement("br"), `Apple Silicon${size}. `, notes);
+    } catch {}
+  })();
+</script>
+</body>
+</html>
