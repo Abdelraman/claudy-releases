@@ -65,7 +65,9 @@ in Settings), and the ↻ button in a chat header restarts that chat on the new 
   type, take screenshots and read console logs. Running JavaScript (`evaluate`) asks you first.
 
 ### Project tools
-- **Files**: a read-only, IDE-style file tree with tabs, fuzzy search and rendered Markdown.
+- **Files and editor**: an IDE-style file tree with tabs, fuzzy search and rendered Markdown, plus a code editor with
+  syntax highlighting (including `.env` files) that saves as you type or on `⌘S`. The gutter marks lines changed since the
+  last commit.
 - **Git**: switch and create branches, commit with an AI-written message, view a history graph, and work through merges,
   cherry-picks, reverts and rebases, including a conflict editor.
 - **Database**: browse a project's MySQL or MariaDB database (read from a Laravel-style `.env`), edit rows, and use a SQL
@@ -77,8 +79,10 @@ in Settings), and the ↻ button in a chat header restarts that chat on the new 
 
 ### Terminal and Servers
 - **Terminal**: tabbed login shells, available both as their own activity and as a panel inside each chat.
-- **Servers**: SSH and SFTP to your hosts, kept in a password-encrypted vault. It includes setup recipes for PHP, Nginx and
-  MariaDB, Node.js with PM2, and Docker.
+- **SSH**: a terminal tab per host, with commands suggested from that host's history as you type. Hosts and keys are kept
+  in a password-encrypted vault, and setup recipes cover PHP, Nginx and MariaDB, Node.js with PM2, and Docker.
+- **SFTP**: your Mac and the server side by side. Drag files between them or drop them in from Finder, and upload,
+  download, rename, create folders and delete.
 
 ### Cowork
 Switch the sidebar between **Code** and **Cowork** with `⌘⇧K`. Cowork gives Claude tasks on documents and files, like

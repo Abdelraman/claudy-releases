@@ -198,6 +198,73 @@
   .group li { font-size: 15.5px; line-height: 1.55; }
   .group li b { display: block; font-weight: 600; font-size: 16px; margin-bottom: 2px; }
 
+  /* showcase: a dark band with the editor, SSH and SFTP up close */
+  .showcase {
+    background: var(--ink); color: #d8d3cc;
+    border-radius: 56px; margin: 120px 16px 0;
+    padding: 110px 0 120px;
+  }
+  .showcase .section-head h2 { color: var(--cream); }
+  .showcase .section-head p { color: #a8a199; }
+  .showcase .section-head p code { background: #34302d; color: var(--win-text); }
+  .shot { display: grid; grid-template-columns: 7fr 5fr; gap: 64px; align-items: center; }
+  .shot + .shot { margin-top: 110px; }
+  .shot.flip { grid-template-columns: 5fr 7fr; }
+  .shot.flip .window { order: 2; }
+  .shot .window { margin: 0; width: 100%; min-width: 0; }
+  .shot .window {
+    border-radius: 14px; border: 1px solid #3a3735;
+    box-shadow: 0 40px 80px -30px rgba(0,0,0,.8);
+  }
+  .shot h3 { font: 700 clamp(28px, 3vw, 38px)/1.05 var(--display); letter-spacing: -.025em; color: var(--cream); margin: 0 0 16px; font-variant-ligatures: no-common-ligatures; text-wrap: balance; }
+  .shot .copy > p { margin: 0 0 24px; font-size: 17px; color: #bdb6ae; }
+  .shot ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid #3a3735; }
+  .shot li { padding: 12px 0 12px 22px; border-bottom: 1px solid #3a3735; font-size: 15.5px; position: relative; }
+  .shot li::before { content: ""; position: absolute; left: 2px; top: 21px; width: 8px; height: 8px; border-radius: 2px; background: var(--ember); }
+  .shot kbd { background: #2e2b29; border-color: #4a4643; color: var(--win-text); }
+  .shot code { color: var(--win-text); }
+
+  .tabs { display: flex; gap: 2px; padding: 0 10px; border-bottom: 1px solid var(--win-line); background: var(--win-side); font-size: 12.5px; overflow: hidden; }
+  .tabs > span { padding: 9px 14px; color: var(--win-dim); display: flex; align-items: center; gap: 7px; white-space: nowrap; border-bottom: 2px solid transparent; }
+  .tabs > span.on { color: var(--win-text); border-bottom-color: var(--ember); background: var(--win); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--add); display: inline-block; }
+  .statusbar { display: flex; justify-content: space-between; padding: 7px 14px; border-top: 1px solid var(--win-line); font: 400 11.5px/1.3 var(--body); color: var(--win-dim); }
+  .statusbar .saved { color: var(--add); }
+
+  /* editor mock */
+  .code { font: 400 12.5px/1.75 var(--mono); padding: 12px 0; overflow: hidden; }
+  .cl { display: grid; grid-template-columns: 44px 1fr; }
+  .code .ln { text-align: right; padding-right: 12px; color: #5d5853; position: relative; }
+  .cl.a .ln, .cl.m .ln { color: #8a847d; }
+  .cl.a .ln::after, .cl.m .ln::after { content: ""; position: absolute; right: 0; top: 2px; bottom: 2px; width: 3px; border-radius: 2px; background: var(--add); }
+  .cl.m .ln::after { background: #6ea8e0; }
+  .cl.m { background: rgba(255,255,255,.035); }
+  .code .src { padding-left: 14px; white-space: pre; color: #d6d0c8; }
+  .code .k { color: #e08b6b; } .code .s { color: #9fcf8f; } .code .f { color: #8fb8e8; } .code .c { color: #7d776f; font-style: italic; } .code .n { color: #d9b56f; }
+  .caret { display: inline-block; width: 2px; height: 1.15em; background: var(--ember); vertical-align: -3px; }
+
+  /* ssh mock */
+  .term { padding: 14px 16px 18px; font: 400 12.5px/1.75 var(--mono); color: #d6d0c8; white-space: pre; overflow: hidden; }
+  .term .p { color: var(--add); } .term .h { color: #8fb8e8; } .term .d { color: var(--win-dim); }
+  .term .ghost { color: #6b655f; }
+  .os { width: 14px; height: 14px; border-radius: 4px; display: inline-grid; place-items: center; font: 700 8px/1 var(--body); color: #fff; }
+
+  /* sftp mock */
+  .panes { display: grid; grid-template-columns: 1fr 1fr; font-size: 12.5px; }
+  .pane + .pane { border-left: 1px solid var(--win-line); }
+  .pane header { padding: 9px 12px; border-bottom: 1px solid var(--win-line); color: var(--win-dim); font: 400 11.5px/1.3 var(--mono); display: flex; justify-content: space-between; gap: 8px; }
+  .pane header b { color: var(--win-text); font: 600 12px/1.3 var(--body); }
+  .row { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 6px 12px; color: #cfcac3; }
+  .row span:last-child { color: var(--win-dim); font: 400 11.5px/1.5 var(--mono); }
+  .row.dir span:first-child::before { content: ""; display: inline-block; width: 11px; height: 8px; margin-right: 8px; border-radius: 2px; background: #c9a35b; }
+  .row.file span:first-child::before { content: ""; display: inline-block; width: 8px; height: 10px; margin-right: 10px; border-radius: 1px; background: #6b655f; vertical-align: -1px; }
+  .row.sel { background: rgba(235,99,60,.18); color: #fff; }
+  .row.drop { outline: 1.5px dashed var(--ember); outline-offset: -3px; border-radius: 6px; margin: 2px 6px; padding: 5px 6px; color: var(--win-text); }
+  .xfer { margin: 10px 12px 12px; padding: 10px 12px; background: #1b1a19; border-radius: 8px; font-size: 12px; }
+  .xfer div { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .bar { height: 4px; border-radius: 4px; background: #34302d; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 64%; background: var(--ember); }
+
   /* install: a real sequence, so it's numbered */
   .install { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; }
   .steps { list-style: none; counter-reset: s; margin: 0; padding: 0; }
@@ -207,6 +274,8 @@
     background: var(--ember); color: #fff; display: grid; place-items: center;
     font: 700 17px/1 var(--display);
   }
+  .install > *, .steps li > div { min-width: 0; }
+  .steps code { overflow-wrap: anywhere; }
   .steps h3, .needs h3 { margin: 4px 0 6px; font: 700 21px/1.2 var(--display); }
   .steps p, .needs p { margin: 0; color: var(--muted); }
   .needs { background: #fff; border-radius: 22px; padding: 34px 36px; align-self: start; border: 1px solid var(--line); }
@@ -271,6 +340,12 @@
     .section-head, .group, .install, .updates, .foot, .help { grid-template-columns: 1fr; gap: 24px; }
     .help-head { position: static; }
     .group ul { grid-template-columns: 1fr; }
+    .showcase { border-radius: 32px; margin: 84px 8px 0; padding: 72px 0 80px; }
+    .shot, .shot.flip { grid-template-columns: 1fr; gap: 32px; }
+    .shot.flip .window { order: 0; }
+    .shot + .shot { margin-top: 72px; }
+    .code .src, .term { font-size: 11.5px; }
+    .panes .row span:last-child { display: none; }
     footer { border-radius: 32px 32px 0 0; }
   }
 </style>
@@ -367,14 +442,15 @@
           <li><b>Git</b>Branches, AI-written commit messages, a history graph, rebases, cherry-picks and a conflict editor.</li>
           <li><b>Database</b>Browse and edit MySQL or MariaDB from a Laravel-style <code>.env</code>, with a SQL console.</li>
           <li><b>Run</b>Start <code>package.json</code> scripts or <code>flutter run</code> on any device, with a live log.</li>
-          <li><b>Files, memory, plugins</b>An IDE-style file tree, <code>CLAUDE.md</code> and permission editing, and a plugin browser.</li>
+          <li><b>Files and editor</b>An IDE-style file tree with tabs, fuzzy search and a code editor that saves as you type.</li>
+          <li><b>Memory and plugins</b>Edit <code>CLAUDE.md</code>, auto-memory and permission rules, and browse Claude Code plugins.</li>
         </ul>
       </div>
       <div class="group">
         <h3>Terminal and servers<small>Shells and SSH without leaving the app.</small></h3>
         <ul>
           <li><b>Terminal</b>Tabbed login shells, as their own view or as a panel inside each chat.</li>
-          <li><b>Servers</b>SSH and SFTP from a password-encrypted vault, with setup recipes for Nginx, PHP, MariaDB, PM2 and Docker.</li>
+          <li><b>SSH and SFTP</b>Connect to your hosts from a password-encrypted vault, with setup recipes for Nginx, PHP, MariaDB, PM2 and Docker.</li>
         </ul>
       </div>
       <div class="group">
@@ -383,6 +459,91 @@
           <li><b>Tasks on files</b>Attach folders or get a scratch folder. Switch to Cowork with <kbd>⌘⇧K</kbd>.</li>
           <li><b>See the output</b>A side panel shows progress, produced files, connectors and document skills.</li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="tools" class="showcase" aria-labelledby="tools-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="tools-title">An editor, SSH and SFTP, built in.</h2>
+        <p>Fix the line Claude missed, then ship it to your server. You don't need to open an IDE, a terminal app or an FTP client.</p>
+      </div>
+
+      <div class="shot">
+        <div class="window" aria-hidden="true">
+          <div class="titlebar"><i></i><i></i><i></i><span>Files — upload-service</span></div>
+          <div class="tabs"><span class="on">client.ts</span><span>.env</span><span>README.md</span></div>
+<div class="code"><div class="cl "><span class="ln">1</span><span class="src"><span class="k">import</span> { post, sleep } <span class="k">from</span> <span class="s">'./http'</span></span></div><div class="cl "><span class="ln">2</span><span class="src"></span></div><div class="cl "><span class="ln">3</span><span class="src"><span class="c">// Retries a chunk with exponential backoff.</span></span></div><div class="cl "><span class="ln">4</span><span class="src"><span class="k">export async function</span> <span class="f">sendChunk</span>(c: Chunk) {</span></div><div class="cl a"><span class="ln">5</span><span class="src">  <span class="k">for</span> (<span class="k">let</span> i = <span class="n">0</span>; ; i++) {</span></div><div class="cl a"><span class="ln">6</span><span class="src">    <span class="k">try</span> { <span class="k">return await</span> <span class="f">post</span>(url, c.body) }</span></div><div class="cl m"><span class="ln">7</span><span class="src">    <span class="k">catch</span> (err) { <span class="k">if</span> (i === <span class="n">4</span>) <span class="k">throw</span> err<span class="caret"></span> }</span></div><div class="cl a"><span class="ln">8</span><span class="src">    <span class="k">await</span> <span class="f">sleep</span>(<span class="n">500</span> * <span class="n">2</span> ** i)</span></div><div class="cl a"><span class="ln">9</span><span class="src">  }</span></div><div class="cl "><span class="ln">10</span><span class="src">}</span></div></div>
+          <div class="statusbar"><span>TypeScript, line 7</span><span class="saved">Saved</span></div>
+        </div>
+        <div class="copy">
+          <h3>Edit any file in the project.</h3>
+          <p>Open a file from the tree or fuzzy search and change it right there. Claude sees the edit on its next turn.</p>
+          <ul>
+            <li>Saves as you type, or press <kbd>⌘S</kbd></li>
+            <li>The gutter marks lines changed since the last commit</li>
+            <li>Syntax highlighting for every common language, plus <code>.env</code> files</li>
+            <li>Tabs, and Markdown files can be read rendered</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shot flip">
+        <div class="window" aria-hidden="true">
+          <div class="titlebar"><i></i><i></i><i></i><span>Servers</span></div>
+          <div class="tabs"><span class="on"><b class="os" style="background:#E95420">U</b>api-prod</span><span><b class="os" style="background:#A81D33">D</b>staging</span><span><span class="dot"></span>db-backup</span></div>
+<div class="term"><span class="p">deploy@api-prod</span>:<span class="h">~/app</span>$ git pull --ff-only
+Updating 8c1d2e4..f3a9b70
+ src/upload/client.ts | 11 <span class="p">+++++++</span><span style="color:var(--del)">----</span>
+<span class="p">deploy@api-prod</span>:<span class="h">~/app</span>$ pm2 reload api
+<span class="d">[PM2] Applying action reloadProcessId on app [api](ids: [ 0, 1 ])</span>
+<span class="d">[PM2] [api](0) ✓</span>
+<span class="d">[PM2] [api](1) ✓</span>
+<span class="p">deploy@api-prod</span>:<span class="h">~/app</span>$ pm2 l<span class="caret"></span><span class="ghost">ogs api --lines 50</span></div>
+        </div>
+        <div class="copy">
+          <h3>SSH into your servers.</h3>
+          <p>Each host opens in its own terminal tab, with the same feel as your local shell.</p>
+          <ul>
+            <li>Hosts and keys live in a password-encrypted vault</li>
+            <li>Suggests commands from that host's history as you type</li>
+            <li>Setup recipes for Nginx, PHP, MariaDB, Node with PM2 and Docker</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="shot">
+        <div class="window" aria-hidden="true">
+          <div class="titlebar"><i></i><i></i><i></i><span>SFTP — api-prod</span></div>
+          <div class="panes">
+            <div class="pane">
+              <header><b>This Mac</b><span>~/Sites/app/dist</span></header>
+              <div class="row dir"><span>assets</span><span>—</span></div>
+              <div class="row file sel"><span>bundle.js</span><span>412 KB</span></div>
+              <div class="row file"><span>bundle.js.map</span><span>1.2 MB</span></div>
+              <div class="row file"><span>index.html</span><span>3 KB</span></div>
+              <div class="row file"><span>robots.txt</span><span>68 B</span></div>
+            </div>
+            <div class="pane">
+              <header><b>api-prod</b><span>/var/www/app/public</span></header>
+              <div class="row dir"><span>assets</span><span>—</span></div>
+              <div class="row dir"><span>uploads</span><span>—</span></div>
+              <div class="row file drop"><span>bundle.js</span><span>398 KB</span></div>
+              <div class="row file"><span>index.html</span><span>3 KB</span></div>
+              <div class="xfer"><div><span>Uploading bundle.js</span><span>64%</span></div><div class="bar"><i></i></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="copy">
+          <h3>Move files with SFTP.</h3>
+          <p>Your Mac on the left, the server on the right, over the same saved connection.</p>
+          <ul>
+            <li>Drag files between the panes, or drop them in from Finder</li>
+            <li>Upload, download, rename, create folders and delete</li>
+            <li>Type a path to jump straight to it</li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
