@@ -51,6 +51,16 @@ in Settings), and the ↻ button in a chat header restarts that chat on the new 
   project's chats.
 - **Notifications**: a sound, a system notification and a Dock badge when a chat needs your attention.
 
+### Tabs and project groups
+- **Chat tabs**: a Chrome-style tab strip across the top of the window, one tab per open chat. Each tab sits in its
+  project's group, and each project keeps its own colour across launches. Chat (Cowork) tabs share a group of their own.
+- **Group menu**: click a project's label to switch between its open tabs, search and reopen its past chats, start a new
+  chat in that project or close the whole group.
+- **Pinned tabs**: pin a tab from its right-click menu. Pinned tabs shrink to an icon, sit at the front of the strip and
+  reopen pinned. Closing one asks first, and closing a group or other tabs leaves pinned tabs alone.
+- **Shortcuts**: `⌘T`, `⌘W` and `⌘N` work on tabs, and you can drag tabs to reorder them. Chat tabs and group colours can
+  each be turned off in Settings.
+
 ### Review and undo changes
 - **Last-turn changes**: Claudy snapshots every turn in a shadow git repo kept outside your project. This works in folders
   that aren't git repos and also catches edits made through Bash. Click "N files changed" to see unified or split diffs,
